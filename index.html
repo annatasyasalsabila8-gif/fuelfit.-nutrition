@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuelFit ⚡ - Premium Nutrition Assistant</title>
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            --gradient-accent: linear-gradient(90deg, #f97316 0%, #ff5500 100%);
+            --card-shadow: 0 10px 25px -5px rgba(30, 41, 59, 0.05), 0 8px 16px -6px rgba(30, 41, 59, 0.05);
+            --focus-shadow: 0 0 0 4px rgba(30, 64, 175, 0.15);
+            --bg-body: #f1f5f9;
+            --text-dark: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: var(--gradient-primary);
+            position: relative;
+            overflow: hidden;
+            color: white;
+            padding: 45px 20px;
+            text-align: center;
+            border-bottom-left-radius: 32px;
+            border-bottom-right-radius: 32px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+        }
+
+        /* Elemen dekoratif abstrak biar rame */
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(249, 115, 22, 0.15);
+            border-radius: 50%;
+            filter: blur(50px);
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        main {
+            max-width: 480px;
+            margin: -25px auto 0 auto;
+            padding: 0 16px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3 {
+            font-size: 1.05rem;
+            margin: 24px 0 12px 0;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            outline: none;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            transition: all 0.25s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #1e40af;
+            background-color: #ffffff;
+            box-shadow: var(--focus-shadow);
+        }
+
+        .allergy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .allergy-item {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .allergy-item:has(input:checked) {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .allergy-item input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: #dc2626;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-box {
+            display: none;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        .recommendation-item {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid #1e40af;
+        }
+
+        .recommendation-item h4 {
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #f0fdf4;
+            color: #166534;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>FuelFit 🔥</h1>
+        <p>⚡ Energi Maksimal, Nutrisi Optimal buat Atlet Juara</p>
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>👤 Profile Atlet</h2>
+            <div class="form-group">
+                <label for="nama-input">Nama Lengkap</label>
+                <input type="text" id="nama-input" placeholder="Masukkan namamu...">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="bb-input">Berat Badan (kg)</label>
+                    <input type="number" id="bb-input" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label for="tb-input">Tinggi Badan (cm)</label>
+                    <input type="number" id="tb-input" placeholder="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>⚠️ Filter Alergi Makanan</label>
+                <div class="allergy-grid">
+                    <label class="allergy-item"><input type="checkbox" value="telur" class="allergy-check"> 🥚 Telur</label>
+                    <label class="allergy-item"><input type="checkbox" value="susu" class="allergy-check"> 🥛 Susu</label>
+                    <label class="allergy-item"><input type="checkbox" value="kacang" class="allergy-check"> 🥜 Kacang</label>
+                    <label class="allergy-item"><input type="checkbox" value="seafood" class="allergy-check"> 🐟 Seafood</label>
+                </div>
+            </div>
+
+            <h2>🎯 Aktivitas Hari Ini</h2>
+            <div class="form-group">
+                <label for="cabor-select">Cabang Olahraga</label>
+                <select id="cabor-select">
+                    <option value="endurance">🏃 Endurance (Lari, Renang, Sepeda)</option>
+                    <option value="power-team">⚽ Team Sports (Futsal, Basket, Badminton)</option>
+                    <option value="combat">🥋 Bela Diri (Silat, Taekwondo, Karate)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="intensity-select">Beban Latihan</label>
+                <select id="intensity-select">
+                    <option value="ringan">🟢 Ringan (Santai / Teknik)</option>
+                    <option value="sedang">🟡 Sedang (Rutin / Game Internal)</option>
+                    <option value="berat">🔴 Berat (Sparing / Turnamen)</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="prosesSistemFuelFit()">Generate Menu Nutrisi 🚀</button>
+        </div>
+
+        <div class="card result-box" id="result-container">
+            <h2>📊 Hasil Analisis Fisik</h2>
+            <div style="background: #f8fafc; padding: 16px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 0.95rem; margin-bottom: 4px;"><strong>Nama:</strong> <span id="res-nama" style="color: #1e3a8a; font-weight: 700;"></span></p>
+                <p style="font-size: 0.95rem; margin-bottom: 4px;"><strong>IMT Tubuh:</strong> <span id="res-imt" style="font-weight: 700;"></span></p>
+                <div><strong>Status:</strong> <span id="res-status" class="status-badge"></span></div>
+                <p style="margin-top: 10px; font-size: 0.85rem; color: #dc2626; font-weight: 700;">
+                    🚫 Blokir Alergen: <span id="res-alergi"></span>
+                </p>
+            </div>
+
+            <h2>💡 Strategi & Menu Makan</h2>
+            <div id="nutrisi-info" style="font-weight: 600; color: #1e40af; background: #eff6ff; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 0.85rem; border-left: 4px solid #3b82f6;"></div>
+            
+            <h3>🍱 Makanan Utama</h3>
+            <div id="menu-utama-list"></div>
+
+            <h3>🍌 Camilan Stamina</h3>
+            <div id="menu-camilan-list"></div>
+
+            <h3>🥤 Hidrasi & Energi</h3>
+            <div id="menu-minuman-list"></div>
+        </div>
+    </main>
+
+    <script>
+        // Database menu yang sama persis tapi struktur tampilan diubah lebih rapi
+        const databaseMenu = [
+            { nama: "Nasi + Telur Ceplok/Dadar (2 butir) + Tempe/Tahu", kategori: "Utama", tipe: "Protein esensial, bagus jaga otot", cabor: ["endurance", "power-team", "combat"], intensitas: ["ringan", "sedang"], untukStatus: ["Ideal", "Berlebih", "Kurang"], mengandung: ["telur"] },
+            { nama: "Nasi Putih Porsi Banyak + Dada Ayam Panggang/Goreng", kategori: "Utama", tipe: "Kalori bersih & tinggi protein pemulihan bugar", cabor: ["power-team", "combat"], intensitas: ["berat"], untukStatus: ["Ideal", "Kurang"], mengandung: [] },
+            { nama: "Nasi Porsi Sedikit + Dada Ayam + Tahu Kukus", kategori: "Utama", tipe: "Tinggi protein, memotong kalori berlebih", cabor: ["power-team", "combat"], intensitas: ["ringan", "sedang"], untukStatus: ["Berlebih"], mengandung: [] },
+            { nama: "Gado-Gado Lonthong + Tempe Goreng (Tanpa Telur)", kategori: "Utama", tipe: "Serat tinggi dan karbohidrat sedang", cabor: ["endurance", "power-team"], intensitas: ["ringan", "sedang"], untukStatus: ["Ideal", "Berlebih"], mengandung: ["kacang"] },
+            { nama: "Nasi + Ikan Kembung Bakar + Lalapan", kategori: "Utama", tipe: "Tinggi Omega-3 baik untuk anti-inflamasi sendi", cabor: ["endurance", "combat"], intensitas: ["sedang", "berat"], untukStatus: ["Ideal", "Berlebih", "Kurang"], mengandung: ["seafood"] },
+            { nama: "Mie Instan Goreng + Dobel Telur Rebus + Sayuran", kategori: "Utama", tipe: "Karbohidrat instan tinggi untuk energi darurat", cabor: ["endurance"], intensitas: ["berat"], untukStatus: ["Kurang", "Ideal"], mengandung: ["telur"] },
+            { nama: "Nasi Sop Ayam Makaroni Hangat", kategori: "Utama", tipe: "Karbohidrat ringan + cairan elektrolit kuah sup", cabor: ["combat", "power-team"], intensitas: ["ringan", "sedang"], untukStatus: ["Ideal", "Berlebih", "Kurang"], mengandung: [] },
+            { nama: "Nasi Rames Daging Rendang", kategori: "Utama", tipe: "Sangat tinggi kalori untuk menaikkan berat badan", cabor: ["endurance", "power-team"], intensitas: ["berat"], untukStatus: ["Kurang"], mengandung: [] },
+            { nama: "2 Buah Pisang Ambon / Cavendish Segar", kategori: "Camilan", tipe: "Kalium tinggi mencegah kram saat bergerak", cabor: ["endurance", "power-team", "combat"], intensitas: ["sedang", "berat"], untukStatus: ["Ideal", "Berlebih", "Kurang"], mengandung: [] },
+            { nama: "Roti Tawar Isi Selai Kacang Tanah", kategori: "Camilan", tipe: "Karbohidrat dan lemak baik penambah tenaga", cabor: ["endurance"], intensitas: ["sedang", "berat"], untukStatus: ["Ideal", "Kurang"], mengandung: ["kacang"] },
+            { nama: "Roti Tawar Isi Selai Srikaya / Cokelat", kategori: "Camilan", tipe: "Glukosa cepat saji pengisi tenaga pra-latihan", cabor: ["endurance", "power-team"], intensitas: ["ringan", "sedang"], untukStatus: ["Ideal", "Kurang"], mengandung: [] },
+            { nama: "Telur Rebus Matang 2 Butir", kategori: "Camilan", tipe: "Murni protein pembentuk jaringan tubuh", cabor: ["combat", "power-team"], intensitas: ["ringan", "sedang", "berat"], untukStatus: ["Ideal", "Berlebih", "Kurang"], mengandung: ["telur"] },
+            { nama: "Snack Bar Gandum (Fitbar / Soyjoy)", kategori: "Camilan", tipe: "Camilan sehat rendah kalori penahan lapar", cabor: ["combat"], intensitas: ["ringan", "sedang"], untukStatus: ["Berlebih", "Ideal"], mengandung: ["susu"] },
+            { nama: "Air Putih Dingin / Suhu Ruang", kategori: "Minuman", tipe: "Hidrasi paling wajib secara berkala", cabor: ["endurance", "power-team", "combat"], intensitas: ["ringan", "sedang", "berat"], untukStatus: ["Ideal", "Berlebih", "Kurang"], mengandung: [] },
+            { nama: "Susu UHT Kotak Cokelat", kategori: "Minuman", tipe: "Recovery otot instan pasca-latihan", cabor: ["power-team", "endurance"], intensitas: ["sedang", "berat"], untukStatus: ["Ideal", "Kurang"], mengandung: ["susu"] },
+            { nama: "Susu Kedelai Murni (Bebas Laktosa)", kategori: "Minuman", tipe: "Hidrasi berprotein aman bagi pencernaan", cabor: ["combat", "power-team"], intensitas: ["ringan", "sedang"], untukStatus: ["Berlebih", "Ideal"], mengandung: [] },
+            { nama: "Minuman Isotonik (Pocari / Mizone)", kategori: "Minuman", tipe: "Mengganti ion tubuh yang hilang akibat keringat", cabor: ["endurance", "power-team", "combat"], intensitas: ["berat"], untukStatus: ["Ideal", "Berlebih", "Kurang"], mengandung: [] }
+        ];
+
+        function prosesSistemFuelFit() {
+            const nama = document.getElementById('nama-input').value || "Atlet Pelajar";
+            const bb = parseFloat(document.getElementById('bb-input').value);
+            const tb = parseFloat(document.getElementById('tb-input').value);
+            const cabor = document.getElementById('cabor-select').value;
+            const intensitas = document.getElementById('intensity-select').value;
+
+            if (!bb || !tb) {
+                alert("Isi Berat Badan dan Tinggi Badan dulu ya!");
+                return;
+            }
+
+            const allergyChecks = document.querySelectorAll('.allergy-check:checked');
+            const daftarAlergi = Array.from(allergyChecks).map(cb => cb.value);
+            document.getElementById('res-alergi').innerText = daftarAlergi.length > 0 ? daftarAlergi.map(a => a.toUpperCase()).join(', ') : "TIDAK ADA";
+
+            const tbMeter = tb / 100;
+            const imt = (bb / (tbMeter * tbMeter)).toFixed(1);
+
+            let statusFisik = ""; let warnaBadge = "";
+            if (imt < 18.5) { statusFisik = "Kurang"; warnaBadge = "#ef4444"; } 
+            else if (imt >= 18.5 && imt <= 25.0) { statusFisik = "Ideal"; warnaBadge = "#10b981"; } 
+            else { statusFisik = "Berlebih"; warnaBadge = "#f59e0b"; }
+
+            document.getElementById('res-nama').innerText = nama;
+            document.getElementById('res-imt').innerText = imt;
+            const badge = document.getElementById('res-status');
+            badge.innerText = statusFisik;
+            badge.style.backgroundColor = warnaBadge;
+
+            let narasiStrategi = "";
+            if (statusFisik === "Kurang") narasiStrategi = "🔥 TARGET SURPLUS: Naikkan porsi karbohidrat dan protein untuk membangun otot yang kuat.";
+            else if (statusFisik === "Berlebih") narasiStrategi = "⚡ TARGET KONTROL: Kurangi makanan digoreng/manis, utamakan rebusan porsi sedang.";
+            else narasiStrategi = "✅ TARGET MAINTENANCE: Fisikmu prima! Jaga performa dengan nutrisi seimbang hari ini.";
+            document.getElementById('nutrisi-info').innerText = narasiStrategi;
+
+            const terfilter = databaseMenu.filter(menu => {
+                const cocok = menu.cabor.includes(cabor) && menu.intensitas.includes(intensitas) && menu.untukStatus.includes(statusFisik);
+                const alergi = menu.mengandung.some(bahan => daftarAlergi.includes(bahan));
+                return cocok && !alergi;
+            });
+
+            const listUtama = document.getElementById('menu-utama-list');
+            const listCamilan = document.getElementById('menu-camilan-list');
+            const listMinuman = document.getElementById('menu-minuman-list');
+
+            listUtama.innerHTML = ""; listCamilan.innerHTML = ""; listMinuman.innerHTML = "";
+            let u=false, c=false, m=false;
+
+            terfilter.forEach(menu => {
+                const item = document.createElement('div');
+                item.className = 'recommendation-item';
+                item.innerHTML = `<h4>${menu.nama}</h4><span class="tag">💡 ${menu.tipe}</span>`;
+                if (menu.kategori === "Utama") { listUtama.appendChild(item); u=true; }
+                else if (menu.kategori === "Camilan") { listCamilan.appendChild(item); c=true; }
+                else if (menu.kategori === "Minuman") { listMinuman.appendChild(item); m=true; }
+            });
+
+            if(!u) listUtama.innerHTML = "<p style='font-size:0.85rem; color:#64748b;'>Nasi Putih + Ayam Suwir (Aman).</p>";
+            if(!c) listCamilan.innerHTML = "<p style='font-size:0.85rem; color:#64748b;'>Buah Pisang Segar.</p>";
+            if(!m) listMinuman.innerHTML = "<p style='font-size:0.85rem; color:#64748b;'>Air Putih Dingin.</p>";
+
+            const resultBox = document.getElementById('result-container');
+            resultBox.style.display = 'block';
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
